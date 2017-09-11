@@ -169,7 +169,7 @@ modifier _OnlyAdmin{
  //ReSet Fine to Zero And Does Return of Book
   function collectFine(address user)_OnlyAdmin returns (bool state){
 ///Find a way to implement Try here
-
+    Record[user].Title="Null";
     Record[user].issued=false;
     Record[user].fine=0;
     returning(user);
