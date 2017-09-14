@@ -128,9 +128,36 @@ modifier _OnlyUser{
  }
 
 
+//SomeOne PLease Fix this
+/*
+function allUsers()constant returns(address[]){
+
+  uint len=users.length;
+address[] memory Unames=new address[](len);
+  for(uint i=0;i<len;i++)
+  Unames[i]=users[i].usr;
+
+  return Unames;
+
+
+}
+*/
 
    //Obvi Func
  function issue(address _user,bytes32 _bID) _OnlyUser returns (bool state){
+   if(Record[_user].issued){
+     throw;
+   }
+   else{
+     //Someone Please Fix this
+
+     /* if(finder(_bID))
+     {
+       throw;
+       return false;
+
+     }
+     else{}*/
    Record[_user]=book({
      pubTime : now,
      Title: Id_Title[_bID],
@@ -138,9 +165,25 @@ modifier _OnlyUser{
      issued: true,
      fine:calcFine(_user)
      });
+
+
 return true;
+
+}
    }
 
+//SomeOne Please Fix This
+/*   function  finder(bytes32 _bID) constant returns (bool st){
+for(uint i=0;i<users.length;i++){
+    if(Record[users[i].usr].bID == _bID){
+      return true;
+
+    }
+  }
+  return false;
+   }
+
+*/
 
 //Give's Name of Book and Fine Pending
  function getInfo(address usr) constant returns (bytes32 Name,uint fine){
@@ -170,7 +213,7 @@ modifier _OnlyAdmin{
   function collectFine(address user)_OnlyAdmin returns (bool state){
 ///Find a way to implement Try here
   if(Record[user].issued) {
-    Record[user].Title="Null";
+    Record[user].Title="";
     Record[user].issued=false;
     Record[user].fine=0;
     Record[user].pubTime=0;
