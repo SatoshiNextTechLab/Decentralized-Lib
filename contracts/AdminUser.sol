@@ -56,20 +56,7 @@ function calcFine(address user)returns (uint fine){
 
 
 }
-  //Obvi..
-  //Note : It probably won't return a string instead give the transaction recipt
-  // To get a String , func must be a getter
 
-  // Never mind , Found a workaround
-function returning(address user)constant returns (string state){
-  uint t=calcFine(user);
-  if(t==0){
-      return "Done";
-    }
-    else{
-      return "Pay the Fine";
-    }
-}
 
 
 
@@ -85,6 +72,7 @@ contract User is Book{
     bytes32 name;
     uint ID;
     address usr;
+    uint credits;
   }
 
   mapping(address=>user) public  Usr_List;
@@ -114,6 +102,7 @@ modifier _OnlyUser{
 
     nUser.name= _name;
     nUser.ID=_ID;
+    nUser.credits=100;
 
     Usr_List[usr]=nUser;
 
@@ -165,7 +154,7 @@ address[] memory Unames=new address[](len);
      issued: true,
      fine:calcFine(_user)
      });
-
+  Usr_List[_user].credits=Usr_List[_user].credits-1;
 
 return true;
 
@@ -185,9 +174,42 @@ for(uint i=0;i<users.length;i++){
 
 */
 
-//Give's Name of Book and Fine Pending
- function getInfo(address usr) constant returns (bytes32 Name,uint fine){
-   return(Record[usr].Title,calcFine(usr));
+//Obvi..
+//Note : It probably won't return a string instead give the transaction recipt
+// To get a String , func must be a getter
+
+// Never mind , Found a workaround
+function returning(address _User) returns (string state){
+uint t=calcFine(_User);
+if(t==0){
+    return "Done";
+  }
+  else{
+    collectFine(_User,t);
+    return "Fine Deducted";
+  }
+}
+
+//ReSet Fine to Zero And Does Return of Book
+ function collectFine(address _user,uint _fine)_OnlyUser returns (bool state){
+///Find a way to implement Try here
+ if(Record[_user].issued) {
+   Usr_List[_user].credits=Usr_List[_user].credits - _fine;
+   Record[_user].Title="";
+   Record[_user].issued=false;
+   Record[_user].fine=0;
+   Record[_user].pubTime=0;
+   returning(_user);
+
+   return true;
+}else {
+ return false;
+}
+   }
+
+//Give's Name of Book , Fine Pending , Credits
+ function getInfo(address usr) constant returns (bytes32 Name,uint fine,uint _credits){
+   return(Record[usr].Title,calcFine(usr),Usr_List[usr].credits);
  }
 
 
@@ -209,21 +231,12 @@ modifier _OnlyAdmin{
     _;
   }
 }
- //ReSet Fine to Zero And Does Return of Book
-  function collectFine(address user)_OnlyAdmin returns (bool state){
-///Find a way to implement Try here
-  if(Record[user].issued) {
-    Record[user].Title="";
-    Record[user].issued=false;
-    Record[user].fine=0;
-    Record[user].pubTime=0;
-    returning(user);
-
+  function giveCredits(address user,uint k) _OnlyAdmin returns (bool state){
+  //Implement Try catch Please
+    Usr_List[user].credits=  Usr_List[user].credits+k;
     return true;
-}else {
-  return false;
-}
-    }
+  }
+
 
 
 }
