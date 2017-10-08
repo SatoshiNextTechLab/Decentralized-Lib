@@ -45,7 +45,7 @@ address owner;
   }
 //Array books will contain the book records
   book[] public books;
-//This will link an user contract to book
+//This will link an user Add to book Id
   mapping (address=>bytes32) public Record;
 //This will link the bID to Title of Book
   mapping (bytes32=>book) public Id_book;
@@ -228,21 +228,14 @@ for(uint i=0;i<users.length;i++){
 // Never mind , Found a workaround
 function returning(address _User,bytes32 _bID)payable returns (bool){
 uint t=calcFine(_User);
-if(t==0){
-    return true;
-    Id_book[_bID].issued=false;
-    Id_book[_bID].fine=0;
-  }
-  else{
-      if(Id_book[_bID].issued ) {
+
    admin.send(t);
 
   Id_book[_bID].issued=false;
   Id_book[_bID].fine=0;
   Id_book[_bID].pubTime=now;
-    return true;
-  }
-}
+  Record[_User]="";
+
 }
 
 //Give's Name of Book , Fine Pending , Credits
